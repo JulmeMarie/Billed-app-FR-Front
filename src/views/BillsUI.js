@@ -1,6 +1,7 @@
 import VerticalLayout from './VerticalLayout.js'
 import ErrorPage from "./ErrorPage.js"
 import LoadingPage from "./LoadingPage.js"
+import {sortByDateDesc } from "../app/format.js"
 
 import Actions from './Actions.js'
 
@@ -18,9 +19,22 @@ const row = (bill) => {
     </tr>
     `)
   }
-
+ 
+  /**
+   * 
+   * @param {*} data : list of bills
+   * @returns 
+   */
 const rows = (data) => {
-  return (data && data.length) ? data.map(bill => row(bill)).join("") : ""
+  try{
+     data = sortByDateDesc(data);
+  }
+  catch(e) {
+    console.log("erreur de tri");
+  }
+  finally{
+    return (data && data.length) ? data.map(bill => row(bill)).join("") : ""
+  } 
 }
 
 export default ({ data: bills, loading, error }) => {
@@ -51,7 +65,7 @@ export default ({ data: bills, loading, error }) => {
   return (`
     <div class='layout'>
       ${VerticalLayout(120)}
-      <div class='content'>
+      <div class='content' data-testid="bills-content">
         <div class='content-header'>
           <div class='content-title'> Mes notes de frais </div>
           <button type="button" data-testid='btn-new-bill' class="btn btn-primary">Nouvelle note de frais</button>
