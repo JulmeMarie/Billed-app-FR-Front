@@ -21,14 +21,8 @@ export default class NewBill {
     const fileExtension = file.name.split('.').pop();
     const validExtensions = ['jpg', 'jpeg', 'png'];
 
-    if (!validExtensions.includes(fileExtension)) {
-      e.target.classList.add('is-invalid');
-    }
-    else {
-      if (e.target.classList.contains('is-invalid')) { //Fichier au bon format
-        e.target.classList.remove('is-invalid');
-      }
-
+    if (validExtensions.includes(fileExtension)) {
+      e.target.classList.remove('is-invalid');
       const formData = new FormData()
       const email = JSON.parse(localStorage.getItem("user")).email
       formData.append('file', file)
@@ -47,6 +41,9 @@ export default class NewBill {
           this.fileUrl = fileUrl
           this.fileName = file.name
         }).catch(error => console.error(error))
+    }
+    else {
+      e.target.classList.add('is-invalid');
     }
   }
   handleSubmit = e => {
