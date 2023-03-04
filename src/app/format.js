@@ -4,9 +4,9 @@ export const formatDate = (dateStr) => {
   const mo = new Intl.DateTimeFormat('fr', { month: 'short' }).format(date)
   const da = new Intl.DateTimeFormat('fr', { day: '2-digit' }).format(date)
   const month = mo.charAt(0).toUpperCase() + mo.slice(1)
-  return `${parseInt(da)} ${month.substr(0,3)}. ${ye.toString().substr(2,4)}`
+  return `${parseInt(da)} ${month.substr(0, 3)}. ${ye.toString().substr(2, 4)}`
 }
- 
+
 export const formatStatus = (status) => {
   switch (status) {
     case "pending":
@@ -19,14 +19,8 @@ export const formatStatus = (status) => {
 }
 
 export const sortByDateDesc = (bills) => {
-  if(bills&&bills.length){
-    return bills.sort(function(a, b) {
-      return new Date(b.date) - new Date(a.date); 
-
-    });
-  }
-  else{
-   return[]
-  }
-  
+  if (!bills) return [];
+  return bills.sort((a, b) => {
+    return new Date(b.date) - new Date(a.date);
+  });
 }

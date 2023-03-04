@@ -17,19 +17,18 @@ export default class NewBill {
   }
   handleChangeFile = e => {
     e.preventDefault()
-    
     const file = e.target.files[0];
     const fileExtension = file.name.split('.').pop();
-		const validExtensions = ['jpg', 'jpeg', 'png'];
+    const validExtensions = ['jpg', 'jpeg', 'png'];
 
-		if (!validExtensions.includes(fileExtension)) {
+    if (!validExtensions.includes(fileExtension)) {
       e.target.classList.add('is-invalid');
-    }  
-		else {
+    }
+    else {
       if (e.target.classList.contains('is-invalid')) { //Fichier au bon format
-			  e.target.classList.remove('is-invalid');
+        e.target.classList.remove('is-invalid');
       }
-		
+
       const formData = new FormData()
       const email = JSON.parse(localStorage.getItem("user")).email
       formData.append('file', file)
@@ -43,7 +42,7 @@ export default class NewBill {
             noContentType: true
           }
         })
-        .then(({fileUrl, key}) => {
+        .then(({ fileUrl, key }) => {
           console.log(fileUrl)
           this.billId = key
           this.fileUrl = fileUrl
@@ -52,15 +51,15 @@ export default class NewBill {
     }
   }
   handleSubmit = e => {
-    e.preventDefault()
-    //console.log('e.target.querySelector(`input[data-testid="datepicker"]`).value', e.target.querySelector(`input[data-testid="datepicker"]`).value)
+    e.preventDefault();
+    if (this.fileUrl === null) return;
     const email = JSON.parse(localStorage.getItem("user")).email
     const bill = {
       email,
       type: e.target.querySelector(`select[data-testid="expense-type"]`).value,
-      name:  e.target.querySelector(`input[data-testid="expense-name"]`).value,
+      name: e.target.querySelector(`input[data-testid="expense-name"]`).value,
       amount: parseInt(e.target.querySelector(`input[data-testid="amount"]`).value),
-      date:  e.target.querySelector(`input[data-testid="datepicker"]`).value,
+      date: e.target.querySelector(`input[data-testid="datepicker"]`).value,
       vat: e.target.querySelector(`input[data-testid="vat"]`).value,
       pct: parseInt(e.target.querySelector(`input[data-testid="pct"]`).value) || 20,
       commentary: e.target.querySelector(`textarea[data-testid="commentary"]`).value,
@@ -68,8 +67,6 @@ export default class NewBill {
       fileName: this.fileName,
       status: 'pending'
     }
-
-    
     this.updateBill(bill)
     this.onNavigate(ROUTES_PATH['Bills'])
   }
@@ -78,12 +75,12 @@ export default class NewBill {
   updateBill = (bill) => {
     if (this.store) {
       this.store
-      .bills()
-      .update({data: JSON.stringify(bill), selector: this.billId})
-      .then(() => {
-        this.onNavigate(ROUTES_PATH['Bills'])
-      })
-      .catch(error => console.error(error))
+        .bills()
+        .update({ data: JSON.stringify(bill), selector: this.billId })
+        .then(() => {
+          this.onNavigate(ROUTES_PATH['Bills'])
+        })
+        .catch(error => console.error(error))
     }
   }
 }
