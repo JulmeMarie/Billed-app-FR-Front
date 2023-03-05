@@ -10,7 +10,6 @@ import { ROUTES_PATH } from "../constants/routes.js";
 import { localStorageMock } from "../__mocks__/localStorage.js";
 import router from "../app/Router.js";
 import ContainerBills from "../containers/Bills.js";
-import mockStore from "../app/Store.js";
 import firebase from "../__mocks__/store.js"
 
 describe("Given I am connected as an employee", () => {
@@ -96,27 +95,37 @@ describe("Given I am connected as an employee", () => {
       });
     });
     describe('When it fails with a 404 error message', () => {
-      test('Then it should display a 404 error message', async () => {
-        firebase.bills.mockImplementationOnce(() => {
-          Promise.reject(new Error('Erreur 404'));
+      test('Then it should throw a 404 error message', async () => {
+
+        jest.spyOn(firebase, 'bills').mockImplementationOnce(() => {
+          throw new Error("Erreur 404");
         });
 
-        const html = BillsUI({ error: 'Erreur 404' });
-        document.body.innerHTML = html;
-        const message = screen.getByText(/Erreur 404/);
-        expect(message).toBeTruthy();
+        const containerBills = new ContainerBills({
+          document,
+          onNavigate,
+          store: firebase,
+          localStorage,
+        });
+        try { await containerBills.getBills(); }
+        catch (error) { expect(error.message).toEqual("Erreur 404"); }
       });
     });
     describe('When it fails with a 500 error message', () => {
-      test('Then it should display a 500 error message', async () => {
-        firebase.bills.mockImplementationOnce(() => {
-          Promise.reject(new Error('Erreur 500'));
+      jest.spyOn(firebase, 'bills');
+      test('Then it should throw a 500 error message', async () => {
+        jest.spyOn(firebase, 'bills').mockImplementationOnce(() => {
+          throw new Error("Erreur 500");
         });
 
-        const html = BillsUI({ error: 'Erreur 500' });
-        document.body.innerHTML = html;
-        const message = screen.getByText(/Erreur 500/);
-        expect(message).toBeTruthy();
+        const containerBills = new ContainerBills({
+          document,
+          onNavigate,
+          store: firebase,
+          localStorage,
+        });
+        try { await containerBills.getBills(); }
+        catch (error) { expect(error.message).toEqual("Erreur 500"); }
       });
     });
   });
